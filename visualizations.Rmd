@@ -29,10 +29,9 @@ demographics %>% ggplot(aes(x = as.factor(`Client Zipcode`), fill = `Client Race
 
 ```
 
-#Client Scores
+# Client Scores
 
 * Mike, please correct me but, I think the SQL tables will be something like:
-
   + Demograhics: ClientID, Client First Name, Client Last Name, Client Zipcode[^1], Client Race, Client Gender
   + JRA Scores: Client_ID, Reassessment, Scores per Domain
 ```{r, client_scores, include = TRUE, echo = FALSE, warnings = FALSE, message = FALSE}
