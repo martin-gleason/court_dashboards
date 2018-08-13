@@ -45,6 +45,8 @@ demographics %>% ggplot(aes(x = as.factor(`Client Zipcode`), fill = `Client Race
 * Mike, please correct me but, I think the SQL tables will be something like:
     + Demograhics: ClientID, Client First Name, Client Last Name, Client Zipcode[^1], Client Race, Client Gender
     + JRA Scores: Client_ID, Reassessment, Scores per Domain
+    
+
 ```{r, client_scores, include = TRUE, echo = FALSE, warnings = FALSE, message = FALSE}
 client_scores %>% 
   ggplot(aes(x = as.factor(`Client ID`), y= Score)) + geom_point() +
@@ -63,8 +65,10 @@ client_scores %>%
   kable() %>%
   kable_styling(c("striped", "bordered", "hover", "responsive"))
 
-
 ```
+
+
+
 ```{r, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE}
 
 demo_score <- client_scores %>%
