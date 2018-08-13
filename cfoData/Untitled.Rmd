@@ -1,0 +1,134 @@
+---
+title: "Stats and the Future of the Department"
+author: Martin Gleason, MS
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+tables: yes
+
+output:
+  pdf_document:
+    fig_caption: true
+urlcolor: blue
+header-includes:
+- \usepackage{color}
+- \usepackage{float}
+---
+\pagenumbering{arabic}
+```{r libraries, include = F, echo = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(xtable)
+library(knitr)
+library(kableExtra)
+library("tidytext")
+options(knitr.table.format = "latex")
+opts_chunk$set(fig.pos = "h")
+```
+
+```{r setup, echo = FALSE}
+load(file = "CFO_JUNE.RData")
+
+```
+
+# What is R
+R is a popular, functional programming language that is used for data analysis and data science. It allows for fast, reliable, and repeatable calculations.
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see [http://rmarkdown.rstudio.com](http://rmarkdown.rstudio.com).
+
+
+# Including CFO DATA
+
+For this demonstration, June CFO data was included.The first ten young people referred this month are as follows:
+
+```{r head, include = T, echo = F}
+kable(head(cfos_june, n = 10), caption = "Raw June CFO Referrals") %>% 
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"), position = "center")
+```
+
+## Messy Data
+Note that this data is messy: Address is seperated into `r names(cfos_june[3:5])`, all of the headings are in caps, and some of the columns have no value for most officer's needs. While we can understand the raw data in context, what the department needs is clear information: Data processed in such a way that it is useable for everyone from line staff to management. This means we need to clean the data in order to get to more useful information. 
+\newpage
+
+##Tidy Data
+R can transform this data quickly and reliably. The end results of this can be quickly loaded in to this document
+
+```{r clcfean, include = T, echo = T}
+kable(head(cfo_june_cleaned, caption = "A Tidier Set of June CFO Data", align = c, trim = T)) %>%
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"))
+```
+
+There are two things about this image that should be explained. First, the code chunk is turned on to illustrate how the software works. Secondly, the following table iss a low-level version of cleaning the data. It means that each young person refered to a CFO in JUNE is only represented once and only one kind of datum exists per cell. More plainly, tidy data means the data is properly organized and makes sense to both machines and people. 
+
+This means we can do more interesting analysis of the data. For example, this the data can display referrals by zipcode as a graph or as a table.
+
+```{r df, include = F}
+df <- cfo_june_cleaned %>% group_by(Zip) %>% 
+  summarise(Youth_per_zip = n()) %>% 
+  arrange(desc(Youth_per_zip))
+```
+
+
+```{r graph, include = T, echo = F, fig.cap = "Referral by Zip", fig.align='center'}
+ggplot(df, aes(y = Youth_per_zip, x = as.character(Zip))) +
+  scale_x_discrete(breaks = as.character(df$Zip), labels = as.character(df$Zip)) +
+  scale_y_continuous() + 
+  geom_bar(stat = "identity", position = "stack", fill = "blue") + 
+  theme(axis.text.x = element_text(angle = -90))  +
+  coord_flip()+xlab("Zipcode")+ylab("Youth per Zip")                
+
+```
+
+```{r youth by zip, include = T, echo = F}
+kable(df,
+  format = "latex",
+  caption = "June CFO: Referrals by Zip") %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+\newpage
+All of this information is generated from the same software that crunches the numbers. Formatting these reports will take time; however, once they are formatted, adding and subtracting information will be significantly easier. 
+
+For example, we can also see which POs referred clients in June.
+```{r po referrals, include = T, echo = F}
+kable(cfo_june_cleaned %>% 
+        ungroup() %>% group_by(POFName, POLName) %>%
+        summarize(PO_Referrals = n()) %>% 
+        arrange(desc(PO_Referrals)),
+        format = "latex",
+      caption = "Number of Referrals per PO From JEMS") %>%
+  kable_styling(bootstrap_options = c("striped", "bordered", "hold_position", position = "float_right"))
+
+fig.cap = "5"
+
+```
+\newpage
+Or we can get a graph of clients by Zip code, diveded by gender.
+
+## Clients by Gender Bar Plot
+```{r Youth by gender bar graph, include = T, echo = F}
+ ggplot(cfo_june_cleaned, aes(Zip, fill = Sex)) +
+  geom_bar() + 
+  facet_grid(.~Sex) +
+  theme(axis.text.x = element_text(angle = -90))  +
+  coord_flip()+xlab("Zipcode")+ylab("Youth per Zip") 
+
+fig.cap = "6"
+```
+----
+
+There are some issues to work out with this approach to the department stats. This include":"
+
+* Formatting the report so it meets department standards.
+    + This will take time, but formatting these reports is yet-another-language to learn
+  
+* Cleaning the data
+    + Access to JEMS and the JEMS Backend is essential to do this work
+    + Data will need to be cleaned, per the previous example
+    + The department should work to establish better data storage practices
+  
+* Free software, the R package and RStudio, need to be installed on machines
+    + Learning R is not difficult, but, it is necessary.
+    + Other free software packages may need to be installed for PDF creation.
+  
+Despite these issues, I believe that statistics and data can still collected, cleaned, and transformed into useful information, regardless of stafffing concerns. Shifting away from Excell based analysis also opens up additional opportunties for data analysis, including [text-mining](https://en.wikipedia.org/wiki/Text_mining), which can help in QA, without any increase to capital or operating expenses.

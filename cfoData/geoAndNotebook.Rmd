@@ -1,0 +1,32 @@
+---
+title: "learning geocode and notebooks
+"
+output: html_notebook
+---
+
+##Mapping code
+geo_code <- april_july_CFO_attendance %>% 
+ unite(address, c(Address, CITY, STATE, ZIP), sep = " ")
+
+geo_code <- geocode(geo_code$address, source = "google", force = F)
+save("geo_code")
+geo_code <- load("geo_code")
+
+##getting base map
+#create function to  save geocode into table/csv.
+chicago11<- get_map("Chicago", zoom = 11, source = "google", force = F)
+
+##cfo map creation
+cfo_map <- ggmap(chicago11, 
+                 base_layer = ggplot(data = geo_code, aes(x = lon, y = lat)), 
+                 force = F) +
+  geom_point(color = "yellow", alpha = .7)
+
+crime_contour <-  ggmap(chicago11, 
+                        base_layer = ggplot(data = geo_code, 
+                                            aes(x = lon, y = lat)), force  = F) + 
+  geom_point(alpha = .7) +
+  geom_density_2d(data = crime_latlong, aes(x = Longitude, y = Latitude)) +
+  scale_color_viridis()
+  
+  
