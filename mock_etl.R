@@ -19,8 +19,9 @@ mock_data$`Client Last Name` <- mock_data$`Client Last Name` %>% str_to_title()
 mock_data$`Client Birthdate` <- mdy(mock_data$`Client Birthdate`)
 mock_data$`Today's Date` <- mdy(mock_data$`Today's Date` )
 
+mock_data$Score
 mock_data$Score <- mock_data$Score %>% 
-  str_extract("[\\[0-9]{2}") %>%
+  str_extract("\\d{1,2}") %>%
   as.numeric()
 
 demographics <- mock_data %>% 
