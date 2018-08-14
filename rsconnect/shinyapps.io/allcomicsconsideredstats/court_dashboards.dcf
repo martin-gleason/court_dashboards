@@ -1,0 +1,13 @@
+name: court_dashboards
+title: court_dashboards
+username:
+account: allcomicsconsideredstats
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 400006
+bundleId: 1535320
+url: https://allcomicsconsideredstats.shinyapps.io/court_dashboards/
+when: 1534282822.23874
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: rfkApp.R|risk_factors_math.R|visualizations.html|visualizations.Rmd|court_dashboard/.DS_Store|court_dashboard/.Rhistory|court_dashboard/reports.R|www/c5.png|cfoData

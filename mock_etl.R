@@ -48,3 +48,5 @@ only_scores <- function(x, ...){
 #new, cleaner tibble
 client_scores[ ,5:ncol(client_scores)] <- sapply(client_scores[ ,5:ncol(client_scores)], only_scores)
 
+client_zipcodes <- demographics %>% group_by(`Client Zipcode`) %>%
+  summarise(`Per Zip` = n())
