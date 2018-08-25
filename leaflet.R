@@ -1,7 +1,7 @@
 #leaflet
 
 library(leaflet)
-library(zipcode)
+data(zipcode)
 
 source("mock_etl.R")
 
@@ -14,3 +14,7 @@ m <- leaflet() %>%
 
 m %>% addTiles() %>%
   addMarkers(lng = chicago_demo$longitude, lat = chicago_demo$latitude)
+
+m %>% addPopups(data = chicago_demo, 
+                popup = paste("Clients in zipcode: ", chicago_demo$`Per Zip`))
+

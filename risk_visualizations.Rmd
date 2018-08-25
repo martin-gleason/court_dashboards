@@ -1,0 +1,116 @@
+---
+title: "New Visiualizations Work Sheet"
+author: "Martin Gleason, MS"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+---
+```{r, packages_and_source, include= TRUE, echo = FALSE, warnings = FALSE, message = FALSE}
+source("reassessment_data.R")
+source("risk_factors_math.R")
+library(kableExtra)
+library(ggmosaic)
+```
+
+#Sample Visualizations for Demographics
+```{r, charts, include = TRUE, echo=FALSE, warning = FALSE, message = FALSE}
+kable(demographics) %>% 
+  kable_styling(bootstrap_options = c("striped", "bordered", "hover")) %>%
+  scroll_box(width = "75%", height = "75%")
+```
+
+
+```{r, charts_2, include = TRUE, echo=FALSE, warning = FALSE, message = FALSE}
+demo_ZRG <- demographics %>% group_by(`Client Zipcode`, `Client Race`, `Client Gender`) %>%
+  summarize(Totals = n())
+
+demo_ZRG %>% kable() %>%
+  kable_styling(bootstrap_options = c("striped", "bordered", "hover")) %>%
+  scroll_box(width = "75%", height = "75%")
+
+```
+
+
+```{r, charts_3, include = TRUE, echo=FALSE, warning = FALSE, message = FALSE}
+demographics %>% ggplot(aes(x = as.factor(`Client Zipcode`), fill = `Client Race`)) +
+  geom_histogram(stat = "count", position = "dodge") +
+  facet_grid(~ `Client Gender`) +
+  labs(x = "Client Zipcode", y = "Total Per Zipcode", title = "JRA: Clients by Zipcode, Gender, and Race") +
+  coord_flip()
+  #theme(axis.text.x = element_text(angle = 90))
+
+```
+
+
+```{r, client_scores, include = TRUE, echo = FALSE, warnings = FALSE, message = FALSE}
+client_scores %>% 
+  ggplot(aes(x = as.factor(`Client ID`), y= Score)) + geom_point() +
+  labs(x = "Client ID", title = "Client Risk Score", y = "JRA Score")
+```
+
+# Client Scores and Demographics
+
+* Because data will be stored in different tables, operations to join them and then visualize them are being done here.
+
+```{r, scores_demographics, echo = TRUE, include= TRUE, message=FALSE, warning=FALSE}
+
+client_scores %>%
+  select(`Client ID`, `Re-evaluation`, Score) %>%
+  left_join(demographics %>% 
+              select(`Client ID`, `Client Race`, `Client Gender`, `Client Zipcode`)) %>% 
+  kable() %>%
+  kable_styling(c("striped", "bordered", "hover", "responsive"))
+
+```
+
+
+```{r, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE}
+
+demo_score <- client_scores %>%
+  select(`Client ID`, `Assessment Date`, `Re-evaluation`, Score) %>%
+    left_join(demographics %>% 
+                select(`Client ID`, `Client Race`, `Client Gender`, `Client Zipcode`))
+```
+
+
+```{r, bigger_graphs, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE, fig.height= 6, fig.width = 7}
+
+demo_score %>%
+  ggplot(aes(x = as.factor(`Client Zipcode`), y = Score, col = `Client Race`)) +
+  scale_x_discrete() +
+  geom_point() + 
+  labs(x = "Client Zipcode", title = "Zipcode and Risk Score") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(~ `Client Gender`)
+```
+
+
+
+```{r, risk_factor_1, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE, fig.height= 6, fig.width = 7}
+demo_risk_factor <-demo_score %>% 
+  mutate(`Risk Level` = sapply(Score, gender = `Client Gender`, return_risk)) 
+```
+
+
+```{r, risk_factor_2, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE, fig.height= 6, fig.width = 7}
+demo_risk_factor %>%
+  ggplot(aes(x = as.factor(`Client Zipcode`), y = Score, col = `Risk Level`)) +
+  scale_x_discrete() +
+  geom_point()
+
+demo_risk_factor %>%
+  kable() %>%
+  kable_styling(c("striped", "bordered", "hover"))
+```
+
+
+```{r, risk_factor_3, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE, fig.height= 6, fig.width = 7}
+demo_risk_factor %>%
+  group_by(`Client Race`, Score, `Risk Level`) %>%
+  summarize(Total = n()) %>%
+  ggplot(aes(x = `Client Race`, y = Score, col = `Risk Level`)) +
+  labs(title = "Risk Level by Race and Score") +
+  geom_point()
+```
+
+
+[^1]: Actually address, but, for the demo purpose, we're just going to stick to Zip.

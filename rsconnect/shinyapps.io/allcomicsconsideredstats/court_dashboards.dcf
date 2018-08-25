@@ -5,9 +5,9 @@ account: allcomicsconsideredstats
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 400006
-bundleId: 1535320
+bundleId: 1553572
 url: https://allcomicsconsideredstats.shinyapps.io/court_dashboards/
-when: 1534282822.23874
+when: 1535206322.6999
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: rfkApp.R|risk_factors_math.R|visualizations.html|visualizations.Rmd|court_dashboard/.DS_Store|court_dashboard/.Rhistory|court_dashboard/reports.R|www/c5.png|cfoData
+ignoredFiles: .httr-oauth|.httr-oauth-SUSPENDED|.RData|age_functions_etl.R|demo_scratch.R|google_sheets.R|reassessment_data.R|rfkApp.R|risk_factors_math.R|risk_visualizations.Rmd|sim_data.R|visualizations.html|visualizations.Rmd|court_dashboard/.DS_Store|court_dashboard/.Rhistory|court_dashboard/reports.R|www/c5.png|cfoData

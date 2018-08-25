@@ -20,6 +20,7 @@ mock_data$`Client Birthdate` <- mdy(mock_data$`Client Birthdate`)
 mock_data$`Today's Date` <- mdy(mock_data$`Today's Date` )
 
 mock_data$Score
+
 mock_data$Score <- mock_data$Score %>% 
   str_extract("\\d{1,2}") %>%
   as.numeric()
@@ -50,3 +51,16 @@ client_scores[ ,5:ncol(client_scores)] <- sapply(client_scores[ ,5:ncol(client_s
 
 client_zipcodes <- demographics %>% group_by(`Client Zipcode`) %>%
   summarise(`Per Zip` = n())
+
+# 
+
+new_client_scores <- client_scores %>% 
+  mutate(`New Score` = select(., 11:ncol(client_scores)) %>%
+           rowSums(na.rm = TRUE))
+
+client_scores %>% mutate(`New Score` = select(., 11:ncol(client_scores)) %>%
+                          rowSums(na.rm = TRUE)) %>%
+                          mutate(`Risk Level` = case_when(`New Score` <=12 ~ "Low",
+                                                          `New Score` >=13 & `New Score` <=18 ~ "Mod",
+                                                          `New Score` > 18 ~ "High")) %>%
+  select(`Client ID`, `Score`, `New Score`, `Risk Level`)

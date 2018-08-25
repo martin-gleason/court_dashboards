@@ -3,6 +3,7 @@ source("court_dashboard/color_scheme.R")
 source("leaflet.R")
 library(shiny)
 library(kableExtra)
+library(RcppArmadillo)
 
 
 
@@ -35,9 +36,13 @@ ui <- fluidPage(
   
   #mainpanel for leaflet map
   ),
-  mainPanel("Leaflet Map",
-            leafletOutput("demo_map"))
   
+  fluidRow(
+    column(12, offset = 4,
+      mainPanel("Leaflet Map",
+            leafletOutput("demo_map"))
+    )
+  )
   )#end layouts 
   
 #end UI
@@ -54,13 +59,16 @@ server <- function(input, output){
     demographics %>% 
       filter(`Client ID` == input$staff_select) %>% 
       knitr::kable("html", booktabs = TRUE) %>%
-      kable_styling(bootstrap_options = c("striped", "bordered", "hover"))
+      kable_styling(bootstrap_options = c("striped", "bordered", "hover", "responsive"))
   }
 
 #output leaflet map  
   output$demo_map <- renderLeaflet({
     m %>% addTiles() %>%
-      addMarkers(lng = chicago_demo$longitude, lat = chicago_demo$latitude)
+      addMarkers(lng = chicago_demo$longitude, lat = chicago_demo$latitude) %>% 
+      addPopups(data = chicago_demo, 
+                popup = paste("Clients in zipcode: ", 
+                              chicago_demo$`Per Zip`))
     
   })
   }
