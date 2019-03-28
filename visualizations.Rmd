@@ -1,5 +1,5 @@
 ---
-title: "Visiualizations Work Sheet"
+title: "Basic Visualizations for CFive"
 author: "Martin Gleason, MS"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
@@ -11,7 +11,8 @@ library(kableExtra)
 library(ggmosaic)
 ```
 
-#Sample Visualizations for Demographics
+<h4>Initial Publication Date: August 14, 2018</h4>
+</br>
 ```{r, charts, include = TRUE, echo=FALSE, warning = FALSE, message = FALSE}
 kable(demographics) %>% 
   kable_styling(bootstrap_options = c("striped", "bordered", "hover")) %>%
@@ -59,7 +60,7 @@ client_scores %>%
 ```{r, scores_demographics, echo = TRUE, include= TRUE, message=FALSE, warning=FALSE}
 
 client_scores %>%
-  select(`Client ID`, `Assessment Date`, `Re-evaluation`, Score) %>%
+  select(`Client ID`, `Re-evaluation`, Score) %>%
   left_join(demographics %>% 
               select(`Client ID`, `Client Race`, `Client Gender`, `Client Zipcode`)) %>% 
   kable() %>%
@@ -71,7 +72,7 @@ client_scores %>%
 ```{r, scores_demographics_graphs, echo = FALSE, include= TRUE, message=FALSE, warning=FALSE}
 
 demo_score <- client_scores %>%
-  select(`Client ID`, `Assessment Date`, `Re-evaluation`, Score) %>%
+  select(`Client ID`, `Re-evaluation`, Score) %>%
     left_join(demographics %>% 
                 select(`Client ID`, `Client Race`, `Client Gender`, `Client Zipcode`))
 ```
